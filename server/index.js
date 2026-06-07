@@ -4,8 +4,17 @@ import cors from "cors";
 import { detectLanguage } from "./utils/detectLangauge.js";
 import multer from "multer";
 import { streamPdf } from "./utils/streamPdf.js";
+import {rateLimit} from "express-rate-limit"
 
 const app = express();
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later.",
+  standardHeaders:true,
+  legacyHeaders:false
+});
+app.use(limiter);
 
 app.use(express.json());
 app.use(cors({
