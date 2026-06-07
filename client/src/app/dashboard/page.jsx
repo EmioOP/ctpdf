@@ -55,7 +55,7 @@ export default function Dashboard() {
       if (mode === 'paste') {
         if (!code.trim()) { setError('Please paste some code first'); return; }
 
-        response = await fetch(`${BACKEND_URL}/generate-pdf/paste`, {
+        response = await fetch(`${BACKEND_URL}/generate/paste`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -69,7 +69,7 @@ export default function Dashboard() {
         formData.append('file', file);
         formData.append('theme', theme);
 
-        response = await fetch(`${BACKEND_URL}/generate-pdf/upload`, {
+        response = await fetch(`${BACKEND_URL}/generate/upload`, {
           method: 'POST',
           credentials: 'include',
           body: formData

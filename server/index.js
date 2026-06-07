@@ -8,9 +8,16 @@ import { streamPdf } from "./utils/streamPdf.js";
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin:true,
+  credentials:true
+}));
 
 const upload = multer({ storage: multer.memoryStorage() });
+
+app.get("/",(_req,res)=>{
+  res.send("Code to PDF API is running");
+})
 
 app.post("/generate/paste", async (req, res) => {
   const { code, language, theme, fileName } = req.body;
