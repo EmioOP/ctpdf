@@ -33,6 +33,7 @@ app.get("/",(_req,res)=>{
 
 app.post("/generate/paste", async (req, res) => {
   const { code, language, theme, fileName } = req.body;
+  console.log("Received PDF generation request for pasted code")
 
   try {
     const pdfBuffer = await generateCodePDF({
