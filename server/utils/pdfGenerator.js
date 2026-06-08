@@ -69,7 +69,6 @@ const buildHtmlTemplate = (highlightedCode, { fileName, language, theme }) => {
 }
 
 const generateCodePDF = async ({ code, language, theme = 'github-light', fileName = 'code' }) => {
-  console.log('Initializing PDF generation')
 
   const highlighter = await createHighlighter({ themes: [theme] })
   await highlighter.loadLanguage('c')
@@ -83,9 +82,7 @@ const generateCodePDF = async ({ code, language, theme = 'github-light', fileNam
     headless: chromium.headless,
   })
 
-  console.log('Browser launched for PDF generation')
   const page = await browser.newPage()
-  console.log('New page created')
 
   await page.setContent(html, { waitUntil: 'networkidle0' })
 
@@ -95,7 +92,6 @@ const generateCodePDF = async ({ code, language, theme = 'github-light', fileNam
     margin: { top: '40px', bottom: '40px', left: '30px', right: '30px' },
   })
 
-  console.log('PDF generated')
   await browser.close()
 
   return pdfBuffer
