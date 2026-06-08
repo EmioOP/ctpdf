@@ -1,4 +1,4 @@
-"use client"
+
 
 export default function Home() {
   const features = [
@@ -92,11 +92,18 @@ export default function Home() {
             available now
           </span>
         </div>
+                  <style>{`
+  .tool-card:hover {
+    border-color: #e2ff5d33 !important;
+    background: #141416 !important;
+  }
+`}</style>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', marginBottom: '4rem' }}>
           {features.map(f => (
             <a
               key={f.name}
               href={f.href}
+              className="tool-card"
               style={{
                 display: 'block',
                 border: '1px solid #1e1e22',
@@ -106,14 +113,6 @@ export default function Home() {
                 background: '#111113',
                 transition: 'border-color 0.15s, background 0.15s',
                 cursor: 'pointer',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = '#e2ff5d33';
-                e.currentTarget.style.background = '#141416';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = '#1e1e22';
-                e.currentTarget.style.background = '#111113';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
@@ -161,9 +160,10 @@ export default function Home() {
           </span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+
           {coming.map((c, i) => (
             <div
-              key={c.name}
+              key={i}
               style={{
                 border: '1px solid #161618',
                 borderRadius: '10px',
