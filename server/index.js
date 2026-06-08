@@ -7,6 +7,9 @@ import { streamPdf } from "./utils/streamPdf.js";
 import {rateLimit} from "express-rate-limit"
 
 const app = express();
+const PORT = process.env.PORT || 4000;
+
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 20, // limit each IP to 100 requests per windowMs
@@ -75,6 +78,6 @@ app.post("/generate/upload", upload.single('file'), async (req, res) => {
   }
 });
 
-app.listen(4000, () => {
-  console.log("Server running on port 3000");
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
 });
