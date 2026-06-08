@@ -1,13 +1,13 @@
-import {chromium} from 'playwright'
-import {createHighlighter} from 'shiki'
-import path from 'path'
+import chromium from '@sparticuz/chromium'
+import puppeteer from 'puppeteer-core'
+import { createHighlighter } from 'shiki'
 
-const buildHtmlTemplate = (highlightedCode,{fileName,language,theme,})=>{
-    const isDark = ['dracula', 'github-dark', 'monokai', 'nord'].includes(theme)
-    const bgColor = isDark ? '#282a36' : '#ffffff';
-    const textColor = isDark ? '#f8f8f2' : '#24292e';
+const buildHtmlTemplate = (highlightedCode, { fileName, language, theme }) => {
+  const isDark = ['dracula', 'github-dark', 'monokai', 'nord'].includes(theme)
+  const bgColor = isDark ? '#282a36' : '#ffffff'
+  const textColor = isDark ? '#f8f8f2' : '#24292e'
 
-      return `
+  return `
     <!DOCTYPE html>
     <html>
       <head>
@@ -21,7 +21,6 @@ const buildHtmlTemplate = (highlightedCode,{fileName,language,theme,})=>{
             font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
           }
 
-          /* Header bar */
           .header {
             background: ${isDark ? '#1e1f29' : '#f0f0f0'};
             padding: 10px 20px;
@@ -46,13 +45,12 @@ const buildHtmlTemplate = (highlightedCode,{fileName,language,theme,})=>{
             text-transform: uppercase;
           }
 
-          /* Code block */
           pre {
             padding: 20px;
             font-size: 13px;
             line-height: 1.7;
             overflow: visible;
-            white-space: pre-wrap;      /* wraps long lines */
+            white-space: pre-wrap;
             word-break: break-all;
           }
 
@@ -67,37 +65,40 @@ const buildHtmlTemplate = (highlightedCode,{fileName,language,theme,})=>{
         ${highlightedCode}
       </body>
     </html>
-  `;
+  `
 }
 
+const generateCodePDF = async ({ code, language, theme = 'github-light', fileName = 'code' }) => {
+  console.log('Initializing PDF generation')
 
+  const highlighter = await createHighlighter({ themes: [theme] })
+  await highlighter.loadLanguage('c')
+  const highlightedCode = highlighter.codeToHtml(code, { lang: 'c', theme: 'github-light' })
 
-const generateCodePDF = async({code,language,theme='github-light',fileName='code'})=>{
-    console.log("Initializing PDF generation")
-    const highlighter = await createHighlighter({themes:[theme]})
-    await highlighter.loadLanguage('c')
-    const highlightedCode =  highlighter.codeToHtml(code,{lang:'c',theme:'github-light'})
-    // const filePath = path.join(outputPath,fileName)
+  const html = buildHtmlTemplate(highlightedCode, { fileName, language, theme })
 
+  const browser = await puppeteer.launch({
+    args: chromium.args,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
+  })
 
-    const html = buildHtmlTemplate(highlightedCode,{fileName,language,theme})
+  console.log('Browser launched for PDF generation')
+  const page = await browser.newPage()
+  console.log('New page created')
 
-    
-    const browser = await chromium.launch()
-    console.log("Browser launched for PDF generation")
-    const page = await browser.newPage()
-    console.log("New page created")
-    await page.setContent(html)
-    const pdfBuffer = await page.pdf({format:'A4',printBackground:true,margin: { top: '40px', bottom: '40px', left: '30px', right: '30px' }}) //todo :allow user to change all these
-    console.log("PDF generated")
-    await browser.close()
+  await page.setContent(html, { waitUntil: 'networkidle0' })
 
-    return pdfBuffer
+  const pdfBuffer = await page.pdf({
+    format: 'A4',
+    printBackground: true,
+    margin: { top: '40px', bottom: '40px', left: '30px', right: '30px' },
+  })
 
+  console.log('PDF generated')
+  await browser.close()
+
+  return pdfBuffer
 }
 
-export {generateCodePDF}
-
-
-
-
+export { generateCodePDF }
