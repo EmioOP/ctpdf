@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "postinstall": "playwright install chromium",
     "dev": "node --watch index.js",
     "start": "node index.js"
   },
