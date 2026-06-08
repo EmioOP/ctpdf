@@ -83,9 +83,12 @@ const generateCodePDF = async({code,language,theme='github-light',fileName='code
 
     
     const browser = await chromium.launch()
+    console.log("Browser launched for PDF generation")
     const page = await browser.newPage()
+    console.log("New page created")
     await page.setContent(html)
     const pdfBuffer = await page.pdf({format:'A4',printBackground:true,margin: { top: '40px', bottom: '40px', left: '30px', right: '30px' }}) //todo :allow user to change all these
+    console.log("PDF generated")
     await browser.close()
 
     return pdfBuffer
